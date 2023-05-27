@@ -1,0 +1,256 @@
+=== === ===
+Kidney1.tif
+=== === ===
+
+=== TIFF directory 0 ===
+TIFF Directory at offset 0xd3808 (866312)
+  Subfile Type: (0 = 0x0)
+  Image Width: 1120 Image Length: 2508 Image Depth: 1
+  Tile Width: 240 Tile Length: 240
+  Bits/Sample: 8
+  Compression Scheme: JPEG
+  Photometric Interpretation: RGB color
+  Samples/Pixel: 3
+  Planar Configuration: single image plane
+  ImageDescription: Aperio Image Library v12.0.15 
+18288x40236 [0,100 17927x40136] (240x240) -> 1120x2508 JPEG/RGB Q=92
+  JPEG Tables: (574 bytes)
+
+=== === ===
+Kidney2_RGB2_20x.svs
+=== === ===
+
+=== TIFF directory 0 ===
+TIFF Directory at offset 0x2b5e08c (45473932)
+  Subfile Type: (0 = 0x0)
+  Image Width: 7967 Image Length: 39056 Image Depth: 1
+  Tile Width: 240 Tile Length: 240
+  Bits/Sample: 8
+  Compression Scheme: JPEG
+  Photometric Interpretation: RGB color
+  YCbCr Subsampling: 2, 2
+  Samples/Pixel: 3
+  Planar Configuration: single image plane
+  ImageDescription: Aperio Image Library v12.0.15 
+8128x39156 [0,100 7967x39056] (240x240) JPEG/RGB Q=70|AppMag = 20|StripeWidth = 2032|ScanScope ID = SS1617|Filename = B16-12680_1_RGB2_20x|Date = 04/07/16|Time = 08:02:15|Time Zone = GMT+03:00|User = 81b12c13-a524-4c14-84df-f10af1c4b162|Parmset = FAINT|MPP = 0.4936|Left = 36.337063|Top = 23.774157|LineCameraSkew = -0.001266|LineAreaXOffset = -0.005452|LineAreaYOffset = -0.010386|Focus Offset = -0.000500|DSR ID = aperiosrv|ImageID = 224995|Exposure Time = 109|Exposure Scale = 0.000001|DisplayColor = 0|SessonMode = NR|OriginalWidth = 8128|OriginalHeight = 39156|ICC Profile = ScanScope v1
+  ICC Profile: <present>, 141992 bytes
+  JPEG Tables: (574 bytes)
+=== TIFF directory 1 ===
+TIFF Directory at offset 0x2b92c84 (45689988)
+  Subfile Type: (0 = 0x0)
+  Image Width: 156 Image Length: 768 Image Depth: 1
+  Bits/Sample: 8
+  Compression Scheme: JPEG
+  Photometric Interpretation: RGB color
+  YCbCr Subsampling: 2, 2
+  Samples/Pixel: 3
+  Rows/Strip: 32
+  Planar Configuration: single image plane
+  ImageDescription: Aperio Image Library v12.0.15 
+7967x39056 -> 156x768 - |AppMag = 20|StripeWidth = 2032|ScanScope ID = SS1617|Filename = B16-12680_1_RGB2_20x|Date = 04/07/16|Time = 08:02:15|Time Zone = GMT+03:00|User = 81b12c13-a524-4c14-84df-f10af1c4b162|Parmset = FAINT|MPP = 0.4936|Left = 36.337063|Top = 23.774157|LineCameraSkew = -0.001266|LineAreaXOffset = -0.005452|LineAreaYOffset = -0.010386|Focus Offset = -0.000500|DSR ID = aperiosrv|ImageID = 224995|Exposure Time = 109|Exposure Scale = 0.000001|DisplayColor = 0|SessonMode = NR|OriginalWidth = 8128|OriginalHeight = 39156|ICC Profile = ScanScope v1
+  JPEG Tables: (289 bytes)
+=== TIFF directory 2 ===
+TIFF Directory at offset 0x30ed924 (51304740)
+  Subfile Type: (0 = 0x0)
+  Image Width: 1991 Image Length: 9764 Image Depth: 1
+  Tile Width: 240 Tile Length: 240
+  Bits/Sample: 8
+  Compression Scheme: JPEG
+  Photometric Interpretation: RGB color
+  YCbCr Subsampling: 2, 2
+  Samples/Pixel: 3
+  Planar Configuration: single image plane
+  ImageDescription: Aperio Image Library v12.0.15 
+8128x39156 [0,100 7967x39056] (240x240) -> 1991x9764 JPEG/RGB Q=85
+  JPEG Tables: (574 bytes)
+=== TIFF directory 3 ===
+TIFF Directory at offset 0x3188866 (51939430)
+  Subfile Type: (0 = 0x0)
+  Image Width: 497 Image Length: 2441 Image Depth: 1
+  Tile Width: 240 Tile Length: 240
+  Bits/Sample: 8
+  Compression Scheme: JPEG
+  Photometric Interpretation: RGB color
+  YCbCr Subsampling: 2, 2
+  Samples/Pixel: 3
+  Planar Configuration: single image plane
+  ImageDescription: Aperio Image Library v12.0.15 
+8128x39156 [0,100 7967x39056] (240x240) -> 497x2441 JPEG/RGB Q=92
+  JPEG Tables: (574 bytes)
+=== TIFF directory 4 ===
+TIFF Directory at offset 0x3200840 (52430912)
+  Subfile Type: reduced-resolution image (1 = 0x1)
+  Image Width: 660 Image Length: 675 Image Depth: 1
+  Bits/Sample: 8
+  Compression Scheme: LZW
+  Photometric Interpretation: RGB color
+  Samples/Pixel: 3
+  Rows/Strip: 4
+  Planar Configuration: single image plane
+  ImageDescription: Aperio Image Library v12.0.15 
+label 660x675
+  Predictor: horizontal differencing 2 (0x2)
+=== TIFF directory 5 ===
+TIFF Directory at offset 0x322ec40 (52620352)
+  Subfile Type: reduced-resolution image (9 = 0x9)
+  Image Width: 1600 Image Length: 634 Image Depth: 1
+  Bits/Sample: 8
+  Compression Scheme: JPEG
+  Photometric Interpretation: RGB color
+  YCbCr Subsampling: 2, 2
+  Samples/Pixel: 3
+  Rows/Strip: 16
+  Planar Configuration: single image plane
+  ImageDescription: Aperio Image Library v12.0.15 
+macro 1600x634
+  JPEG Tables: (289 bytes)
+
+=== === ===
+Region_001_FOV_00041_Acridine_Or_Gray.combined.tif
+=== === ===
+
+=== TIFF directory 0 ===
+TIFF Directory at offset 0x414008 (4276232)
+  Image Width: 1392 Image Length: 1024
+  Bits/Sample: 8
+  Compression Scheme: None
+  Photometric Interpretation: RGB color
+  Orientation: row 0 top, col 0 lhs
+  Samples/Pixel: 3
+  Rows/Strip: 4176
+  Planar Configuration: single image plane
+
+=== === ===
+Region_001_FOV_00041_Acridine_Or_Gray.tif
+=== === ===
+=== TIFF directory 0 ===
+TIFF Directory at offset 0x8 (8)
+  Image Width: 1392 Image Length: 1024
+  Resolution: 96, 96 pixels/inch
+  Bits/Sample: 8
+  Sample Format: unsigned integer
+  Compression Scheme: LZW
+  Photometric Interpretation: min-is-black
+  Orientation: row 0 top, col 0 lhs
+  Samples/Pixel: 1
+  Rows/Strip: 128
+  Planar Configuration: single image plane
+  SubIFD Offsets:  1054
+  DocumentName: /home/alras/data/ImageAnalysis/week1/Region_001_FOV_00041_Acridine_Or_Gray.tif
+  PageName: Region_001_FOV_00041_Acridine_Or.tif
+  Software: GIMP 2.10.18
+  DateTime: 2020:09:15 12:44:37
+  EXIFIFDOffset: 0x4c0
+  ICC Profile: <present>, 544 bytes
+TIFF Directory at offset 0x4c0 (1216)
+  ColorSpace: 1
+
+=== === ===
+Region_001_FOV_00041_DAPI_Gray.tif
+=== === ===
+=== TIFF directory 0 ===
+TIFF Directory at offset 0x8 (8)
+  Image Width: 1392 Image Length: 1024
+  Resolution: 96, 96 pixels/inch
+  Bits/Sample: 8
+  Sample Format: unsigned integer
+  Compression Scheme: LZW
+  Photometric Interpretation: min-is-black
+  Orientation: row 0 top, col 0 lhs
+  Samples/Pixel: 1
+  Rows/Strip: 128
+  Planar Configuration: single image plane
+  SubIFD Offsets:  1038
+  DocumentName: /home/alras/data/ImageAnalysis/week1/Region_001_FOV_00041_DAPI_Gray.tif
+  PageName: Region_001_FOV_00041_DAPI.tif
+  Software: GIMP 2.10.18
+  DateTime: 2020:09:15 12:45:25
+  EXIFIFDOffset: 0x4b0
+  ICC Profile: <present>, 544 bytes
+TIFF Directory at offset 0x4b0 (1200)
+  ColorSpace: 1
+
+=== === ===
+Region_001_FOV_00041_FITC_Gray.tif 
+=== === ===
+
+=== TIFF directory 0 ===
+TIFF Directory at offset 0x8 (8)
+  Image Width: 1392 Image Length: 1024
+  Resolution: 96, 96 pixels/inch
+  Bits/Sample: 8
+  Sample Format: unsigned integer
+  Compression Scheme: LZW
+  Photometric Interpretation: min-is-black
+  Orientation: row 0 top, col 0 lhs
+  Samples/Pixel: 1
+  Rows/Strip: 128
+  Planar Configuration: single image plane
+  SubIFD Offsets:  1038
+  DocumentName: /home/alras/data/ImageAnalysis/week1/Region_001_FOV_00041_FITC_Gray.tif
+  PageName: Region_001_FOV_00041_FITC.tif
+  Software: GIMP 2.10.18
+  DateTime: 2020:09:15 12:45:52
+  EXIFIFDOffset: 0x4b0
+  ICC Profile: <present>, 544 bytes
+TIFF Directory at offset 0x4b0 (1200)
+  ColorSpace: 1
+
+=== === ===
+SkinOverview.tif
+=== === ===
+
+=== TIFF directory 0 ===
+TIFF Directory at offset 0x32068 (204904)
+  Subfile Type: reduced-resolution image (9 = 0x9)
+  Image Width: 1600 Image Length: 634 Image Depth: 1
+  Bits/Sample: 8
+  Compression Scheme: JPEG
+  Photometric Interpretation: RGB color
+  Samples/Pixel: 3
+  Rows/Strip: 16
+  Planar Configuration: single image plane
+  ImageDescription: Aperio Image Library v12.0.11 
+macro 1600x634
+  JPEG Tables: (289 bytes)
+
+=== === ===
+TMA2.tif
+=== === ===
+
+=== TIFF directory 0 ===
+TIFF Directory at offset 0x233982 (2308482)
+  Image Width: 3102 Image Length: 3102
+  Tile Width: 1000 Tile Length: 1000
+  Bits/Sample: 8
+  Compression Scheme: JPEG
+  Photometric Interpretation: YCbCr
+  YCbCr Subsampling: 1, 1
+  Orientation: row 0 top, col 0 lhs
+  Samples/Pixel: 3
+  Planar Configuration: single image plane
+  SubIFD Offsets: 2308818
+  ImageDescription: <?xml version="1.0" encoding="utf-8"?>
+<indica>
+	<image>
+		<pixels>
+			<dimension sizeX="3102" sizeY="3102" ifd="0"/>
+			<dimension sizeX="1551" sizeY="1551" ifd="1"/>
+		</pixels>
+	</image>
+</indica>
+
+
+  Software: IndicaLabsImageWriter v1.0
+=== TIFF directory 1 ===
+TIFF Directory at offset 0x233bd2 (2309074)
+  Image Width: 1551 Image Length: 1551
+  Tile Width: 1000 Tile Length: 1000
+  Bits/Sample: 8
+  Compression Scheme: JPEG
+  Photometric Interpretation: YCbCr
+  YCbCr Subsampling: 1, 1
+  Orientation: row 0 top, col 0 lhs
+  Samples/Pixel: 3
+  Planar Configuration: single image plane
+  SubIFD Offsets: 2309370
