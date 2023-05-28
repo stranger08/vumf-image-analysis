@@ -3,6 +3,11 @@ from matplotlib import pyplot as plt
 import numpy as np
 import math
 
+# TODO -> make tagNames a dict(key = name in normal case from docs, value = tag (as is))
+#         this will make output of printHeader() look nicer
+#
+#
+
 tagNames = [
 # baseline tag names
   'SUBFILETYPE',
@@ -135,7 +140,7 @@ def circle():
         circle[i][j] = MAX_VAL - abs(math.sqrt((i - center)**2 + (j - center)**2))
   return circle
   
-IMG_SET_REL_PATH = './datasets/imgset1/'
+IMG_SET_1_REL_PATH = './datasets/imgset1/'
 OUT_DIR_REL_PATH = './datasets/outimgset1/'
   
 def saveImageToFile(imageDataArray, filename, isRBG):
@@ -157,9 +162,9 @@ def imageConstruction():
   saveImageToFile(circle, 'circle.tif', False)
 
 def combine():
-  tifImgAcridine = TIFF.open(IMG_SET_REL_PATH + 'Region_001_FOV_00041_Acridine_Or_Gray.tif')
-  tifImgDAPI = TIFF.open(IMG_SET_REL_PATH + 'Region_001_FOV_00041_DAPI_Gray.tif')
-  tifImgFITC = TIFF.open(IMG_SET_REL_PATH + 'Region_001_FOV_00041_FITC_Gray.tif')
+  tifImgAcridine = TIFF.open(IMG_SET_1_REL_PATH + 'Region_001_FOV_00041_Acridine_Or_Gray.tif')
+  tifImgDAPI = TIFF.open(IMG_SET_1_REL_PATH + 'Region_001_FOV_00041_DAPI_Gray.tif')
+  tifImgFITC = TIFF.open(IMG_SET_1_REL_PATH + 'Region_001_FOV_00041_FITC_Gray.tif')
   dataAcridine = tifImgAcridine.read_image()
   dataDAPI = tifImgDAPI.read_image()
   dataFITC = tifImgFITC.read_image()
@@ -168,5 +173,5 @@ def combine():
   plt.show()
   saveImageToFile(combined, 'Region_001_FOV_00041_combined.tif', True)
 
-combine()
+#combine()
 
