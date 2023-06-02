@@ -8,6 +8,9 @@ import math
 #
 #
 
+IMG_SET_1_REL_PATH = './datasets/imgset1/'
+OUT_DIR_REL_PATH = './datasets/outimgset1/'
+
 tagNames = [
 # baseline tag names
   'SUBFILETYPE',
@@ -116,6 +119,14 @@ def printHeader(tifImg):
     if tagValue:
       print(tagName, tagValue)
 
+
+def testPrintHeader():
+  tifImg = TIFF.open(IMG_SET_1_REL_PATH + 'Region_001_FOV_00041_Acridine_Or_Gray.tif')
+  printHeader(tifImg)
+  tifImg.close()
+
+#testPrintHeader()
+
 def iterHeaders(tifImg):
   printHeader(tifImg)
   while not tifImg.LastDirectory():
@@ -140,9 +151,6 @@ def circle():
         circle[i][j] = MAX_VAL - abs(math.sqrt((i - center)**2 + (j - center)**2))
   return circle
   
-IMG_SET_1_REL_PATH = './datasets/imgset1/'
-OUT_DIR_REL_PATH = './datasets/outimgset1/'
-  
 def saveImageToFile(imageDataArray, filename, isRBG):
   tifImg = TIFF.open(OUT_DIR_REL_PATH + filename, mode='w')
   tifImg.write_image(imageDataArray, write_rgb=isRBG)
@@ -153,13 +161,10 @@ def plotImage(imageDataArray):
   plt.show()
   
 def imageConstruction():
-  #plotImage(grayscaleSideways)
-  #plotImage(grayscaleDiagonal)
   saveImageToFile(grayscaleSideways, 'grayscaleSideways.tif', False)
   saveImageToFile(grayscaleDiagonal, 'grayscaleDiagonal.tif', False)
-  circle = circle()
-  #plotImage(circle)
-  saveImageToFile(circle, 'circle.tif', False)
+  c = circle()
+  saveImageToFile(c, 'circle.tif', False)
 
 def combine():
   tifImgAcridine = TIFF.open(IMG_SET_1_REL_PATH + 'Region_001_FOV_00041_Acridine_Or_Gray.tif')
@@ -175,3 +180,18 @@ def combine():
 
 #combine()
 
+def testGreyscaleSideways():
+  plotImage(grayscaleSideways)
+
+#testGreyscaleSideways()
+
+def testGreyscaleDiagonal():
+  plotImage(grayscaleDiagonal)
+
+#testGreyscaleDiagonal()
+
+def testCircle():
+  c = circle()
+  plotImage(c)
+
+#testCircle()

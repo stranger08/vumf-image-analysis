@@ -1,6 +1,7 @@
 from libtiff import TIFF, TIFFfile, TIFFimage
 from matplotlib import pyplot as plt
 import numpy as np
+from functools import partial
 #
 # TODO add test for lookup tables for greyscale and negate transformations
 # TODO add four images when displaying results for histogram equaling method:
@@ -112,40 +113,45 @@ def testIntervalInterpolation():
   print(data[0:10,0:10])
   tifImg.close()
 
-def hn(dataImageArray, r):
-  if r == 0:
-    return dataImageArray.size - np.count_nonzero(dataImageArray)
-  else:
-    return np.count_nonzero(np.where(dataImageArray == r, dataImageArray, 0))
+#
+def hist(imageArr, intensity):
+  return (imageArr == intensity).sum()
 
-def collectIntensitiesHistogramValues(dataImageArray):
-  return [hn(dataImageArray, r) for r in range(0, MAX_VAL)]
+#
+def pdf(histLookup, resolution, intensity):
+  return histLookup[intensity] / resolution
 
-def testCollectIntensitiesHistogramValues():
+#
+def histEq(pdfLookup, i):
+  s = (MAX_VAL - 1) * sum([pdfLookup[ij] for ij in range(0, i)])
+  return np.floor(s).astype(np.uint8)
+
+#
+def collectLookup(pFunc):
+  return [pFunc(i) for i in range(0, MAX_VAL)]
+
+def testHistEq():
   tifImg = TIFF.open(IMG_SET_2_REL_PATH + 'Fig0310(b)(washed_out_pollen_image).tif', mode='r')
   data = tifImg.read_image()
-  plt.hist(data, range=(0, MAX_VAL))
-  plt.show()
-  tifImg.close()
+  dataOrigin = duplicate(data)
 
-def pr(dataImageArray, r):
-  return hn(dataImageArray, r) / dataImageArray.size
+  pHist = partial(hist, data)
+  histLookup = collectLookup(pHist)
 
-def histEqIntTranformation(dataImageArray, r):
-  return np.floor(MAX_VAL * sum([pr(dataImageArray, rj) for rj in range(0, r)])).astype(np.uint8)
+  pPdf = partial(pdf, histLookup, data.size)
+  pdfLookup = collectLookup(pPdf)
 
-def constructlookupTable(dataImageArray, func):
-  return [func(dataImageArray, x) for x in range(0, MAX_VAL)]
+  pHistEq = partial(histEq, pdfLookup)
+  histEqLt = collectLookup(pHistEq)
 
-def testHistEqIntTranformation():
-  tifImg = TIFF.open(IMG_SET_2_REL_PATH + 'Fig0310(b)(washed_out_pollen_image).tif', mode='r')
-  data = tifImg.read_image()
-  lookupTable = constructlookupTable(data, histEqIntTranformation)
-  for i, row in enumerate(data):
-    for j, x in enumerate(row):
-      data[i, j] = lookupTable[x]
-  plotImage(data)
-  plt.hist(data, range=(0, MAX_VAL))
+  converted = np.array([[histEqLt[i] for i in row] for row in data])
+
+  fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16,9))
+  fig.suptitle('Sharing x per column, y per row')
+  ax1.imshow(dataOrigin, interpolation='nearest', cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax2.hist(dataOrigin.flatten(), range=(0, MAX_VAL), bins=MAX_VAL)
+  ax3.imshow(converted, interpolation='nearest', cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax4.hist(converted.flatten(), range=(0, MAX_VAL), bins=MAX_VAL)
   plt.show()
   tifImg.close()
 
@@ -157,5 +163,4 @@ def testHistEqIntTranformation():
 #testThreshholdingValue()
 #testThreshholdingRange()
 #testIntervalInterpolation()
-testHistEqIntTranformation()
-#testCollectIntensitiesHistogramValues()
+testHistEq()
