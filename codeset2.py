@@ -163,4 +163,4 @@ def testHistEq():
 #testThreshholdingValue()
 #testThreshholdingRange()
 #testIntervalInterpolation()
-testHistEq()
+#testHistEq()

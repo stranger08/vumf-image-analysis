@@ -2,6 +2,7 @@ from libtiff import TIFF
 import numpy as np
 from matplotlib import pyplot as plt
 from codeset1 import plotImage, MAX_VAL
+from codeset2 import intensityPowerlaw
 
 # TODO -> refactor padding, this already so spaggeti
 def spatialFilter(image, filter, convolution=False, mirror=False):
@@ -57,8 +58,6 @@ def testSpacialFilter():
   res = spatialFilter(image, filter, convolution=True)
   print(res)
 
-#testSpacialFilter()
-
 def gaussian(x, y, sigma):
   return np.exp(-((x**2 + y**2) / (2*sigma**2)))
 
@@ -86,8 +85,6 @@ def testGaussianFilter():
   plt.show()
   tifImg.close()
 
-# TODO Sobel
-
 def sobelX():
   return np.array([
     [-1, 0, 1],
@@ -102,43 +99,35 @@ def sobelY():
     [ 1,  2,  1]
   ])
 
-def testSobel():
-  tifImg = TIFF.open(IMG_SET_3_REL_PATH + 'Fig0342(a)(contact_lens_original).tif', mode='r')
-  data = tifImg.read_image().astype(np.float64)
+def sobelGradient(img):
   filterX = sobelX()
   filterY = sobelY()
-  resX = spatialFilter(data, filterX, convolution=True)
-  resY = spatialFilter(data, filterY, convolution=True)
-  res = clip(np.floor((resX**2 + resY**2)**(1/2)))
-  print(np.unique(res))
+  resX = spatialFilter(img, filterX, convolution=True)
+  resY = spatialFilter(img, filterY, convolution=True)
+  return (resX**2 + resY**2)**(1/2)
+
+def testSobel():
+  tifImg = TIFF.open(IMG_SET_3_REL_PATH + 'Fig0342(a)(contact_lens_original).tif', mode='r')
+  img = tifImg.read_image().astype(np.float64)
+  sobelImg = sobelGradient(img)
   fig, ((ax1, ax2)) = plt.subplots(1, 2, figsize=(16,9))
-  ax1.imshow(data, interpolation='nearest', cmap='gray', vmin=0, vmax=MAX_VAL)
-  ax2.imshow(res, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax1.imshow(img, interpolation='nearest', cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax2.imshow(to8bit(sobelImg, mode='clip'), cmap='gray', vmin=0, vmax=MAX_VAL)
   plt.show()
   tifImg.close()
 
 IMG_SET_3_REL_PATH = './datasets/imgset3/'
 
+def blockAverageFilter(img, n):
+  filter = np.full((n, n), 1/(n**2))
+  return spatialFilter(img, filter, mirror=True)
+
 def testBlockAveraging():
   tifImg = TIFF.open(IMG_SET_3_REL_PATH + 'Fig0333(a)(test_pattern_blurring_orig).tif', mode='r')
-  data = tifImg.read_image()
-  filterSize = 11
-  filter = np.full((filterSize, filterSize), 1/(filterSize**2))
-  res = spatialFilter(data.astype(np.float64), filter)
+  img = tifImg.read_image().astype(np.float64)
+  res = blockAverageFilter(img, 5)
   fig, ((ax1, ax2)) = plt.subplots(1, 2, figsize=(16,9))
-  ax1.imshow(data, interpolation='nearest', cmap='gray', vmin=0, vmax=MAX_VAL)
-  ax2.imshow(np.floor(res).astype(np.uint8), interpolation='nearest', cmap='gray', vmin=0, vmax=MAX_VAL)
-  plt.show()
-  tifImg.close()
-
-def testBlockAveraging1():
-  tifImg = TIFF.open(IMG_SET_3_REL_PATH + 'Fig0334(a)(hubble-original).tif', mode='r')
-  data = tifImg.read_image()
-  filterSize = 15
-  filter = np.full((filterSize, filterSize), 1/(filterSize**2))
-  res = spatialFilter(data.astype(np.float64), filter)
-  fig, ((ax1, ax2)) = plt.subplots(1, 2, figsize=(16,9))
-  ax1.imshow(data, interpolation='nearest', cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax1.imshow(img, interpolation='nearest', cmap='gray', vmin=0, vmax=MAX_VAL)
   ax2.imshow(np.floor(res).astype(np.uint8), interpolation='nearest', cmap='gray', vmin=0, vmax=MAX_VAL)
   plt.show()
   tifImg.close()
@@ -157,45 +146,60 @@ def testMedianFilter():
   plt.show()
   tifImg.close()
 
-def testLaplacianFilter():
-  tifImg = TIFF.open(IMG_SET_3_REL_PATH + 'Fig0338(a)(blurry_moon).tif', mode='r')
-  data = tifImg.read_image().astype(np.float64)
+def applyLaplacianN4(img):
   filterN4 = np.array([
     [ 0,  1,  0],
     [ 1, -4,  1],
     [ 0,  1,  0]
   ], dtype=np.float64)
+  return spatialFilter(img, filterN4, convolution=True)
 
+def applyLaplacianN8(img):
   filterN8 = np.array([
     [ 1,  1,  1],
     [ 1, -8,  1],
     [ 1,  1,  1]
   ], dtype=np.float64)
-  res4 = spatialFilter(data, filterN4, convolution=True)
-  res8 = spatialFilter(data, filterN8, convolution=True)
+  return spatialFilter(img, filterN8, convolution=True)
 
-# TODO implement clip as separate function
-  res4 = data - res4
-  res4 = np.where(res4 < 0, 0, res4)
-  res4 = np.where(res4 > MAX_VAL, MAX_VAL, res4).astype(np.uint8)
+def testLaplacian():
+  tifImg = TIFF.open(IMG_SET_3_REL_PATH + 'Fig0338(a)(blurry_moon).tif', mode='r')
+  img = tifImg.read_image().astype(np.float64)
+  laplacian4img = applyLaplacianN4(img)
+  fig, ((ax1, ax2, ax3), (ax4, ax5, ax6)) = plt.subplots(2, 3, figsize=(16,9))
+  ax1.imshow(img, interpolation='nearest', cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax1.set_axis_off()
+  ax2.imshow(to8bit(laplacian4img, mode='scale'), cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax2.set_axis_off()
+  ax3.imshow(to8bit(img - laplacian4img, mode='clip'), cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax3.set_axis_off()
+  laplacian8img = applyLaplacianN8(img)
+  ax4.imshow(img, interpolation='nearest', cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax4.set_axis_off()
+  ax5.imshow(to8bit(laplacian8img, mode='scale'), cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax5.set_axis_off()
+  ax6.imshow(to8bit(img - laplacian8img, mode='clip'), cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax6.set_axis_off()
 
-  res8 = data - res8
-  res8 = np.where(res8 < 0, 0, res8)
-  res8 = np.where(res8 > MAX_VAL, MAX_VAL, res8).astype(np.uint8)
-  
-  fig, ((ax1, ax2, ax3)) = plt.subplots(1, 3, figsize=(16,9))
-  ax1.imshow(data, interpolation='nearest', cmap='gray', vmin=0, vmax=MAX_VAL)
-  # # TODO -> this is achieved by clip all to range [0, MAX_VAL]
-  # # TODO -> implement function to do a clip conversion.
-  ax2.imshow(res4, interpolation='nearest', cmap='gray', vmin=0, vmax=MAX_VAL)
-  ax3.imshow(res8, interpolation='nearest', cmap='gray', vmin=0, vmax=MAX_VAL)
   plt.show()
   tifImg.close()
+
+def to8bit(img, mode='clip'):
+  if mode == 'clip':
+    res = np.where(img < 0, 0, img)
+    res = np.where(res > MAX_VAL, MAX_VAL, res)
+    return np.floor(res).astype(np.uint8)
+  if mode == 'scale':
+    res = np.interp(img, (np.min(img), np.max(img)), (0, MAX_VAL))
+    return np.floor(res).astype(np.uint8)
+  if mode == '8bitadd':
+    return np.floor(np.interp(img, (0, MAX_VAL*2), (0, MAX_VAL))).astype(np.uint8)
+  return img
 
 def clip(data):
   res = np.where(data < 0, 0, data)
   res = np.where(res > MAX_VAL, MAX_VAL, res)
-  return res.astype(np.uint8)
+  return np.floor(res).astype(np.uint8)
 
 def testHighboost():
   tifImg = TIFF.open(IMG_SET_3_REL_PATH + 'Fig0340(a)(dipxe_text).tif', mode='r')
@@ -221,13 +225,50 @@ def testHighboost():
   plt.show()
   tifImg.close()
 
-def Skeletor():
-  pass # TODO
+def testSkeleton():
+  tifImg = TIFF.open(IMG_SET_3_REL_PATH + 'Fig0343(a)(skeleton_orig).tif', mode='r')
+  imgOriginal = tifImg.read_image().astype(np.float64)
+  laplacian4img = applyLaplacianN4(imgOriginal)
+  sharpened = imgOriginal - laplacian4img
+  sobelImg = sobelGradient(imgOriginal)
+  sobelImg = to8bit(sobelImg, mode='clip')
+  sobelAvgImg = blockAverageFilter(sobelImg, 5)
+  sobelAvgImg = to8bit(sobelAvgImg, mode='scale')
+  mask = to8bit(sobelAvgImg * sharpened, mode='scale')
+  sharpaf = to8bit(imgOriginal + mask.astype(np.float64), mode='clip')
+  powerLawImg = intensityPowerlaw(sharpaf, 0.57)
+  fig, ((ax, bx)) = plt.subplots(1, 2, figsize=(16,9))
+  ax.imshow(imgOriginal, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax.set_axis_off()
+  #bx.imshow(to8bit(laplacian4img, mode='scale'), cmap='gray', vmin=0, vmax=MAX_VAL)
+  #bx.set_axis_off()
 
+  #bx.imshow(to8bit(sharpened, mode='scale'), cmap='gray', vmin=0, vmax=MAX_VAL)
+  #bx.set_axis_off()
+
+  #bx.imshow(to8bit(sobelImg, mode='clip'), cmap='gray', vmin=0, vmax=MAX_VAL)
+  #bx.set_axis_off()
+
+  #bx.imshow(sobelAvgImg, cmap='gray', vmin=0, vmax=MAX_VAL)
+  #bx.set_axis_off()
+
+  #bx.imshow(mask, cmap='gray', vmin=0, vmax=MAX_VAL)
+  #bx.set_axis_off()
+
+  #bx.imshow(sharpaf, cmap='gray', vmin=0, vmax=MAX_VAL)
+  #bx.set_axis_off()
+
+  bx.imshow(powerLawImg, cmap='gray', vmin=0, vmax=MAX_VAL)
+  bx.set_axis_off()
+
+  plt.show()
+  tifImg.close()
+
+#testSpacialFilter()
 #testBlockAveraging()
-#testBlockAveraging1()
 #testMedianFilter()
-#testLaplacianFilter()
+#testLaplacian()
 #testGaussianFilter()
 #testSobel()
-testHighboost()
+#testHighboost()
+testSkeleton()
