@@ -110,7 +110,6 @@ def testIntervalInterpolation():
         if p.isApplicable(x):
           data[i, j] = p.value(x)
   plotImage(data)
-  print(data[0:10,0:10])
   tifImg.close()
 
 #

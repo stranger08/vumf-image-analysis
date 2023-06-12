@@ -180,7 +180,7 @@ def testLaplacian():
   ax5.set_axis_off()
   ax6.imshow(to8bit(img - laplacian8img, mode='clip'), cmap='gray', vmin=0, vmax=MAX_VAL)
   ax6.set_axis_off()
-
+  plt.tight_layout()
   plt.show()
   tifImg.close()
 
@@ -236,31 +236,25 @@ def testSkeleton():
   sobelAvgImg = to8bit(sobelAvgImg, mode='scale')
   mask = to8bit(sobelAvgImg * sharpened, mode='scale')
   sharpaf = to8bit(imgOriginal + mask.astype(np.float64), mode='clip')
-  powerLawImg = intensityPowerlaw(sharpaf, 0.57)
-  fig, ((ax, bx)) = plt.subplots(1, 2, figsize=(16,9))
-  ax.imshow(imgOriginal, cmap='gray', vmin=0, vmax=MAX_VAL)
+  powerLawImg = intensityPowerlaw(sharpaf.astype(np.float64), 0.5)
+  fig, ((ax, bx, cx, dx), (ex, fx, gx, hx)) = plt.subplots(2, 4, figsize=(16,9))
+  ax.imshow(imgOriginal.astype(np.uint8), cmap='gray', vmin=0, vmax=MAX_VAL)
   ax.set_axis_off()
-  #bx.imshow(to8bit(laplacian4img, mode='scale'), cmap='gray', vmin=0, vmax=MAX_VAL)
-  #bx.set_axis_off()
-
-  #bx.imshow(to8bit(sharpened, mode='scale'), cmap='gray', vmin=0, vmax=MAX_VAL)
-  #bx.set_axis_off()
-
-  #bx.imshow(to8bit(sobelImg, mode='clip'), cmap='gray', vmin=0, vmax=MAX_VAL)
-  #bx.set_axis_off()
-
-  #bx.imshow(sobelAvgImg, cmap='gray', vmin=0, vmax=MAX_VAL)
-  #bx.set_axis_off()
-
-  #bx.imshow(mask, cmap='gray', vmin=0, vmax=MAX_VAL)
-  #bx.set_axis_off()
-
-  #bx.imshow(sharpaf, cmap='gray', vmin=0, vmax=MAX_VAL)
-  #bx.set_axis_off()
-
-  bx.imshow(powerLawImg, cmap='gray', vmin=0, vmax=MAX_VAL)
+  bx.imshow(to8bit(laplacian4img, mode='scale'), cmap='gray', vmin=0, vmax=MAX_VAL)
   bx.set_axis_off()
-
+  cx.imshow(to8bit(sharpened, mode='scale'), cmap='gray', vmin=0, vmax=MAX_VAL)
+  cx.set_axis_off()
+  dx.imshow(to8bit(sobelImg, mode='clip'), cmap='gray', vmin=0, vmax=MAX_VAL)
+  dx.set_axis_off()
+  ex.imshow(sobelAvgImg, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ex.set_axis_off()
+  fx.imshow(mask, cmap='gray', vmin=0, vmax=MAX_VAL)
+  fx.set_axis_off()
+  gx.imshow(sharpaf, cmap='gray', vmin=0, vmax=MAX_VAL)
+  gx.set_axis_off()
+  hx.imshow(powerLawImg, cmap='gray', vmin=0, vmax=MAX_VAL)
+  hx.set_axis_off()
+  plt.tight_layout()
   plt.show()
   tifImg.close()
 
