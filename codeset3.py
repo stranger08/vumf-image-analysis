@@ -7,7 +7,7 @@ from codeset2 import intensityPowerlaw
 # TODO -> refactor padding, this already so spaggeti
 def spatialFilter(image, filter, convolution=False, mirror=False):
   out = np.copy(image)
-  relIdxMaxOffset = len(filter) // 2
+  filterCenter = len(filter) // 2
 
   for img_i, row in enumerate(image):
     for img_j, x in enumerate(row):
@@ -15,23 +15,23 @@ def spatialFilter(image, filter, convolution=False, mirror=False):
       acc = 0
       # for median filter we collect values into array
       #mask = []
-      for fil_i in range(-relIdxMaxOffset, relIdxMaxOffset + 1):
-        for fil_j in range(-relIdxMaxOffset, relIdxMaxOffset + 1):
+      for filterOffsetI in range(-filterCenter, filterCenter + 1):
+        for filterOffsetJ in range(-filterCenter, filterCenter + 1):
           # calc eff coordinates
-          i = img_i + fil_i if not convolution else img_i - fil_i
-          j = img_j + fil_j if not convolution else img_j - fil_j
+          i = img_i + filterOffsetI if not convolution else img_i - filterOffsetI
+          j = img_j + filterOffsetJ if not convolution else img_j - filterOffsetJ
           # check if outside of an image
           if i < 0 or i >= image.shape[0]:
             if mirror:
-              i = img_i - fil_i if not convolution else img_i + fil_i
+              i = img_i - filterOffsetI if not convolution else img_i + filterOffsetI
             else:
               continue
           if j < 0 or j >= image.shape[1]:
             if mirror:
-              j = img_j - fil_j if not convolution else img_j + fil_j
+              j = img_j - filterOffsetJ if not convolution else img_j + filterOffsetJ
             else:
               continue
-          acc += image[i, j] * filter[relIdxMaxOffset + fil_i, relIdxMaxOffset + fil_j]
+          acc += image[i, j] * filter[filterCenter + filterOffsetI, filterCenter + filterOffsetJ]
           # for median filter, TODO move to different function.
           # mask.append(image[i, j])
 
@@ -42,7 +42,7 @@ def spatialFilter(image, filter, convolution=False, mirror=False):
 
   return out
 
-def testSpacialFilter():
+def testSpatialFilter():
   filter = np.array([
     [1, 2, 3],
     [4, 5, 6],
@@ -65,11 +65,11 @@ def generateGaussianFilter(n, sigma):
   if n % 2 == 0:
     raise "Filter side length must be odd!"
   res = np.full((n, n), 0, dtype=np.float64)
-  relIdxMaxOffset = n // 2
+  filterCenter = n // 2
 
-  for fil_i in range(-relIdxMaxOffset, relIdxMaxOffset + 1):
-    for fil_j in range(-relIdxMaxOffset, relIdxMaxOffset + 1):
-      res[relIdxMaxOffset + fil_i][relIdxMaxOffset + fil_j] = gaussian(fil_i, fil_j, sigma)
+  for filterOffsetI in range(-filterCenter, filterCenter + 1):
+    for filterOffsetJ in range(-filterCenter, filterCenter + 1):
+      res[filterCenter + filterOffsetI][filterCenter + filterOffsetJ] = gaussian(filterOffsetI, filterOffsetJ, sigma)
 
   return res
 
@@ -258,7 +258,7 @@ def testSkeleton():
   plt.show()
   tifImg.close()
 
-#testSpacialFilter()
+#testSpatialFilter()
 #testBlockAveraging()
 #testMedianFilter()
 #testLaplacian()
