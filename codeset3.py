@@ -265,4 +265,4 @@ def testSkeleton():
 #testGaussianFilter()
 #testSobel()
 #testHighboost()
-testSkeleton()
+#testSkeleton()
