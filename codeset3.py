@@ -13,6 +13,10 @@ def spatialFilter(image, filter, convolution=False, mirror=False):
     for img_j, x in enumerate(row):
 
       acc = 0
+      # TODO -> extract this to separate function which would,
+      # receive image box of filter size, filter itself, return pixel value.
+      # this will work for all median, average, geometrical mean, convolution, correlation,
+      # likely something can be done for mirroring too. 
       # for median filter we collect values into array
       #mask = []
       for filterOffsetI in range(-filterCenter, filterCenter + 1):
