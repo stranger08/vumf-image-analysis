@@ -32,7 +32,7 @@ def geometricMeanFilter(img, m, n, mirror=False):
               j = img_j - filterOffsetJ
             else:
               continue
-          acc *= img[i, j]
+          acc *= img[i, j] if img[i, j] != 0 else 1
 
       out[img_i, img_j] = acc**(1/(m*n))
   return out
@@ -349,3 +349,53 @@ def testSaltNPepperNoiseRemovalByMaxMinFilters():
   tifImgSaltNoise.close()
 
 #testSaltNPepperNoiseRemovalByMaxMinFilters()
+
+def testUniformSaltPepperRestoration():
+  tifImgUniformNoise = TIFF.open(IMG_SET_5_REL_PATH + 'Fig0512(a)(ckt-uniform-var-800).tif', mode='r')
+  imgUnf = tifImgUniformNoise.read_image().astype(np.float64)
+
+  tifImgAddSaltPepper = TIFF.open(IMG_SET_5_REL_PATH + 'Fig0512(b)(ckt-uniform-plus-saltpepr-prob-pt1).tif', mode='r')
+  imgUSP = tifImgAddSaltPepper.read_image().astype(np.float64)
+
+  imgAMF = blockAverageFilter(imgUSP, 5)
+  imgAMF8 = to8bit(imgAMF, mode='clip')
+
+  imgGMF = geometricMeanFilter(imgUSP, 5, 5, mirror=False)
+  imgGMF8 = to8bit(imgGMF, mode='clip')
+
+  imgMedian1 = medianFilter(imgUSP, 5, 5, mirror=False)
+  imgMedian18 = to8bit(imgMedian1, mode='clip')
+
+  imgAlphaTrimmed1 = alphaTrimmedMeanFilter(imgUSP, 5, 5, 5, mirror=False)
+  imgAlphaTrimmed18 = to8bit(imgAlphaTrimmed1, mode='clip')
+
+  fig, ((ax1, ax2, ax3), (ax4, ax5, ax6)) = plt.subplots(2, 3, figsize=(16,9))
+  ax1.imshow(imgUnf, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax1.set_axis_off()
+  ax1.set_title('Uniform noise')
+
+  ax2.imshow(imgUSP, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax2.set_axis_off()
+  ax2.set_title('Additional salt n pepper')
+
+  ax3.imshow(imgAMF8, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax3.set_axis_off()
+  ax3.set_title('Arithmetic 5x5 mean filter')
+
+  ax4.imshow(imgGMF8, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax4.set_axis_off()
+  ax4.set_title('Geometric 5x5 mean filter')
+
+  ax5.imshow(imgMedian18, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax5.set_axis_off()
+  ax5.set_title('Median filter')
+
+  ax6.imshow(imgAlphaTrimmed18, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax6.set_axis_off()
+  ax6.set_title('Alpha-trimmed mean filter d=5')
+  plt.tight_layout()
+  plt.show()
+  tifImgUniformNoise.close()
+  tifImgAddSaltPepper.close()
+
+testUniformSaltPepperRestoration()
