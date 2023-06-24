@@ -100,6 +100,126 @@ def medianFilter(image, m, n, mirror=False):
 
   return out
 
+def minFilter(image, m, n, mirror=False):
+  out = np.copy(image)
+  mCenter = m // 2
+  nCenter = n // 2
+
+  for img_i, row in enumerate(image):
+    for img_j, x in enumerate(row):
+      mask = []
+      for filterOffsetI in range(-mCenter, mCenter + 1):
+        for filterOffsetJ in range(-nCenter, nCenter + 1):
+          # calc eff coordinates
+          i = img_i + filterOffsetI
+          j = img_j + filterOffsetJ
+          # check if outside of an image
+          if i < 0 or i >= image.shape[0]:
+            if mirror:
+              i = img_i - filterOffsetI
+            else:
+              continue
+          if j < 0 or j >= image.shape[1]:
+            if mirror:
+              j = img_j - filterOffsetJ
+            else:
+              continue
+          mask.append(image[i, j])
+
+      out[img_i, img_j] = np.min(np.array(mask))
+
+  return out
+
+def maxFilter(image, m, n, mirror=False):
+  out = np.copy(image)
+  mCenter = m // 2
+  nCenter = n // 2
+
+  for img_i, row in enumerate(image):
+    for img_j, x in enumerate(row):
+      mask = []
+      for filterOffsetI in range(-mCenter, mCenter + 1):
+        for filterOffsetJ in range(-nCenter, nCenter + 1):
+          # calc eff coordinates
+          i = img_i + filterOffsetI
+          j = img_j + filterOffsetJ
+          # check if outside of an image
+          if i < 0 or i >= image.shape[0]:
+            if mirror:
+              i = img_i - filterOffsetI
+            else:
+              continue
+          if j < 0 or j >= image.shape[1]:
+            if mirror:
+              j = img_j - filterOffsetJ
+            else:
+              continue
+          mask.append(image[i, j])
+
+      out[img_i, img_j] = np.max(np.array(mask))
+
+  return out
+
+def midPointFilter(image, m, n, mirror=False):
+  out = np.copy(image)
+  mCenter = m // 2
+  nCenter = n // 2
+
+  for img_i, row in enumerate(image):
+    for img_j, x in enumerate(row):
+      mask = []
+      for filterOffsetI in range(-mCenter, mCenter + 1):
+        for filterOffsetJ in range(-nCenter, nCenter + 1):
+          # calc eff coordinates
+          i = img_i + filterOffsetI
+          j = img_j + filterOffsetJ
+          # check if outside of an image
+          if i < 0 or i >= image.shape[0]:
+            if mirror:
+              i = img_i - filterOffsetI
+            else:
+              continue
+          if j < 0 or j >= image.shape[1]:
+            if mirror:
+              j = img_j - filterOffsetJ
+            else:
+              continue
+          mask.append(image[i, j])
+
+      out[img_i, img_j] = np.floor(abs(np.max(np.array(mask)) + np.min(np.array(mask))) / 2)
+
+  return out
+
+def alphaTrimmedMeanFilter(image, m, n, d, mirror=False):
+  out = np.copy(image)
+  mCenter = m // 2
+  nCenter = n // 2
+
+  for img_i, row in enumerate(image):
+    for img_j, x in enumerate(row):
+      mask = []
+      for filterOffsetI in range(-mCenter, mCenter + 1):
+        for filterOffsetJ in range(-nCenter, nCenter + 1):
+          # calc eff coordinates
+          i = img_i + filterOffsetI
+          j = img_j + filterOffsetJ
+          # check if outside of an image
+          if i < 0 or i >= image.shape[0]:
+            if mirror:
+              i = img_i - filterOffsetI
+            else:
+              continue
+          if j < 0 or j >= image.shape[1]:
+            if mirror:
+              j = img_j - filterOffsetJ
+            else:
+              continue
+          mask.append(image[i, j])
+
+      out[img_i, img_j] = (1/(m*n - d)) * sum(mask)
+
+  return out
+
 def testGaussianNoiseRemoval():
   tifImg = TIFF.open(IMG_SET_5_REL_PATH + 'Fig0507(a)(ckt-board-orig).tif', mode='r')
   img = tifImg.read_image().astype(np.float64)
@@ -195,4 +315,37 @@ def testMedianFilterIterative():
   plt.show()
   tifImgSaltPepperNoise.close()
 
-testMedianFilterIterative()
+#testMedianFilterIterative()
+
+def testSaltNPepperNoiseRemovalByMaxMinFilters():
+  tifImgPepperNoise = TIFF.open(IMG_SET_5_REL_PATH + 'Fig0508(a)(circuit-board-pepper-prob-pt1).tif', mode='r')
+  imgPep = tifImgPepperNoise.read_image().astype(np.float64)
+
+  tifImgSaltNoise = TIFF.open(IMG_SET_5_REL_PATH + 'Fig0508(b)(circuit-board-salt-prob-pt1).tif', mode='r')
+  imgSalt = tifImgSaltNoise.read_image().astype(np.float64)
+
+  imgPepRemoved = maxFilter(imgPep, 3, 3, mirror=False)
+  imgPepRemoved8 = to8bit(imgPepRemoved, mode='clip')
+
+  imgSaltRemoved = minFilter(imgSalt, 3, 3, mirror=False)
+  imgSaltRemoved8 = to8bit(imgSaltRemoved, mode='clip')
+
+  fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16,9))
+  ax1.imshow(imgPep, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax1.set_axis_off()
+  ax1.set_title('Pepper noise')
+  ax2.imshow(imgSalt, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax2.set_axis_off()
+  ax2.set_title('Salt noise')
+  ax3.imshow(imgPepRemoved8, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax3.set_axis_off()
+  ax3.set_title('Contraharmonic Q=1.5 on above')
+  ax4.imshow(imgSaltRemoved8, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax4.set_axis_off()
+  ax4.set_title('Contraharmonic Q=-1.5 on above')
+  plt.tight_layout()
+  plt.show()
+  tifImgPepperNoise.close()
+  tifImgSaltNoise.close()
+
+#testSaltNPepperNoiseRemovalByMaxMinFilters()
