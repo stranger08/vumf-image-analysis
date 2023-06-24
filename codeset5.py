@@ -1,6 +1,7 @@
 
 from libtiff import TIFF
 import numpy as np
+import math
 from matplotlib import pyplot as plt
 from codeset1 import MAX_VAL
 from codeset3 import to8bit, blockAverageFilter
@@ -398,4 +399,66 @@ def testUniformSaltPepperRestoration():
   tifImgUniformNoise.close()
   tifImgAddSaltPepper.close()
 
-testUniformSaltPepperRestoration()
+#testUniformSaltPepperRestoration()
+
+def IBRF(img, C, W):
+  out = np.copy(img)
+  center = len(out[0]) // 2
+  for i, row in enumerate(out):
+    for j, col in enumerate(row):
+      D = math.sqrt((i - center)**2 + (j - center)**2)
+      if C - W / 2 <= D and D <= C + W / 2:
+        out[i][j] = 0
+      else:
+        out[i][j] = 1
+  return out
+
+def GBRF(img, C, W):
+  out = np.copy(img)
+  center = len(out[0]) // 2
+  for i, row in enumerate(out):
+    for j, col in enumerate(row):
+      D = math.sqrt((i - center)**2 + (j - center)**2)
+      if D != 0:
+        out[i][j] = 1 - np.exp(-(abs((D**2 - C**2)/(D*W))**2))
+      else:
+        out[i][j] = 1
+  return out
+
+def BBRF(img, C, W, n):
+  out = np.copy(img)
+  center = len(out[0]) // 2
+  for i, row in enumerate(out):
+    for j, col in enumerate(row):
+      D = ((i - center)**2 + (j - center)**2)**(1/2)
+      denominator = D**2 - C**2
+      if denominator != 0:
+        out[i][j] = 1 / (1 + (abs((D*W) / denominator))**(2*n))
+      else:
+        out[i][j] = 1 / (1 + (abs((D*W)))**(2*n))
+  return out
+
+def testBandFilters():
+  img = np.full((512, 512), 0).astype(np.float64)
+  img8 = to8bit(img, mode='clip')
+
+  imgIBRF = IBRF(img, 128, 60)
+  imgIBRF8 = to8bit(imgIBRF, mode='scale')
+
+  imgGBRF = GBRF(img, 128, 60)
+  imgGBRF8 = to8bit(imgGBRF, mode='scale')
+
+  imgBBRF = BBRF(img, 128, 60, 1)
+  imgBBRF8 = to8bit(imgBBRF, mode='scale')
+
+  fig, ((ax1, ax2, ax3)) = plt.subplots(1, 3, figsize=(16,9))
+  ax1.imshow(imgIBRF8, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax1.set_axis_off()
+  ax2.imshow(imgGBRF8, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax2.set_axis_off()
+  ax3.imshow(imgBBRF8, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax3.set_axis_off()
+  plt.tight_layout()
+  plt.show()
+
+testBandFilters()
