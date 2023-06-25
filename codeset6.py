@@ -2,7 +2,8 @@ import numpy as np
 from libtiff import TIFF
 from matplotlib import pyplot as plt
 from codeset1 import MAX_VAL
-from codeset3 import to8bit
+from codeset2 import intensityPowerlaw, thresholdingValue
+from codeset3 import to8bit, applyLaplacianN8
 
 def runStructuralElement(image, se, mode='erosion'):
   out = np.copy(image)
@@ -52,7 +53,6 @@ SE = np.array([
   [0, 1, 0]
 ])
 
-#print(runStructuralElement(image, SE, mode='erosion'))
 IMG_SET_6_REL_PATH = './datasets/imgset6/'
 
 def test():
@@ -69,5 +69,24 @@ def test():
   plt.show()
   tifImg.close()
 
-test()
-# TODO -> to labelling
+def cclN4(img):
+  lm = np.reshape(np.arange(0, img.size), img.shape).astype(np.uint32)
+  while True:
+    hit = False
+    for i, row in enumerate(image):
+      for j, _ in enumerate(row):
+        if i > 0 and img[i - 1, j] == img[i, j] and lm[i, j] < lm[i - 1, j]:
+          lm[i, j] = lm[i - 1, j]
+          hit = True
+        if i < img.shape[0] - 1 and img[i + 1, j] == img[i, j] and lm[i, j] < lm[i + 1, j]:
+          lm[i, j] = lm[i + 1, j]
+          hit = True
+        if j > 0 and img[i, j - 1] == img[i, j] and lm[i, j] < lm[i, j - 1]:
+          lm[i, j] = lm[i, j - 1]
+          hit = True
+        if j < img.shape[1] - 1 and img[i, j + 1] == img[i, j] and lm[i, j] < lm[i, j + 1]:
+          lm[i, j] = lm[i, j + 1]
+          hit = True
+    if not hit:
+      break
+  return lm
