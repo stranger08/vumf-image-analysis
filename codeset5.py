@@ -5,6 +5,7 @@ import math
 from matplotlib import pyplot as plt
 from codeset1 import MAX_VAL
 from codeset3 import to8bit, blockAverageFilter
+from codeset4 import pad, shift, crop, BLPF
 
 IMG_SET_5_REL_PATH = './datasets/imgset5/'
 
@@ -427,10 +428,11 @@ def GBRF(img, C, W):
 
 def BBRF(img, C, W, n):
   out = np.copy(img)
-  center = len(out[0]) // 2
+  centerI = len(out) // 2
+  centerJ = len(out[0]) // 2
   for i, row in enumerate(out):
     for j, col in enumerate(row):
-      D = ((i - center)**2 + (j - center)**2)**(1/2)
+      D = ((i - centerI)**2 + (j - centerJ)**2)**(1/2)
       denominator = D**2 - C**2
       if denominator != 0:
         out[i][j] = 1 / (1 + (abs((D*W) / denominator))**(2*n))
@@ -451,14 +453,79 @@ def testBandFilters():
   imgBBRF = BBRF(img, 128, 60, 1)
   imgBBRF8 = to8bit(imgBBRF, mode='scale')
 
-  fig, ((ax1, ax2, ax3)) = plt.subplots(1, 3, figsize=(16,9))
+  imgIBPF = 1 - IBRF(img, 128, 60)
+  imgIBPF8 = to8bit(imgIBPF, mode='scale')
+
+  imgGBPF = 1 - GBRF(img, 128, 60)
+  imgGBPF8 = to8bit(imgGBPF, mode='scale')
+
+  imgBBPF = 1 - BBRF(img, 128, 60, 1)
+  imgBBPF8 = to8bit(imgBBPF, mode='scale')
+
+  fig, ((ax1, ax2, ax3), (ax4, ax5, ax6)) = plt.subplots(2, 3, figsize=(16,9))
   ax1.imshow(imgIBRF8, cmap='gray', vmin=0, vmax=MAX_VAL)
   ax1.set_axis_off()
   ax2.imshow(imgGBRF8, cmap='gray', vmin=0, vmax=MAX_VAL)
   ax2.set_axis_off()
   ax3.imshow(imgBBRF8, cmap='gray', vmin=0, vmax=MAX_VAL)
   ax3.set_axis_off()
+
+  ax4.imshow(imgIBPF8, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax4.set_axis_off()
+  ax5.imshow(imgGBPF8, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax5.set_axis_off()
+  ax6.imshow(imgBBPF8, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax6.set_axis_off()
   plt.tight_layout()
   plt.show()
 
-testBandFilters()
+#testBandFilters()
+
+# FIXME couldn't reproduce example in the slides. getting different spectrum.
+# Since other specturm calculations are following examples in slides, suspect image or bug in this function
+def testBBRF():
+  tifSinusoidalNoise = TIFF.open(IMG_SET_5_REL_PATH + 'Fig0505(a)(applo17_boulder_noisy).tif', mode='r')
+  imgSinusoidalNoise = tifSinusoidalNoise.read_image().astype(np.float64)
+
+  imgPadded = pad(imgSinusoidalNoise)
+  imgShifted = shift(imgPadded)
+  imgShifted8 = to8bit(imgShifted, mode='clip')
+
+  dft0 = np.fft.fft2(imgShifted)
+  dftA = abs(dft0) / dft0.size**(1/2)
+  dftL = np.log(dftA + 1)
+  dft8 = to8bit(dftL, mode='scale')
+
+  dftBbrf = BBRF(dft0, 256, 640, 5) * dft0
+  dftBbrfA = abs(dftBbrf) / dftBbrf.size**(1/2)
+  dftBbrfL = np.log(dftBbrfA + 1)
+  dftBbrf8 = to8bit(dftBbrfL, mode='scale')
+
+  idft0 = np.fft.ifft2(dftBbrf)
+  idftR = np.real(idft0)
+  idftS = shift(idftR)
+  idft8 = to8bit(idftS, mode='clip')
+  idftC = crop(idft8)
+
+  fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16,9))
+  ax1.imshow(imgSinusoidalNoise, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax1.set_axis_off()
+  ax1.set_title('Sinusoidal noise')
+
+  ax2.imshow(dft8, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax2.set_axis_off()
+  ax2.set_title('Spectrum')
+
+  ax3.imshow(dftBbrf8, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax3.set_axis_off()
+  ax3.set_title('Spectrum filtered by BRRF')
+
+  ax4.imshow(idftC, cmap='gray', vmin=0, vmax=MAX_VAL)
+  ax4.set_axis_off()
+  ax4.set_title('Filtered with BRRF')
+
+  plt.tight_layout()
+  plt.show()
+  tifSinusoidalNoise.close()
+
+#testBBRF()

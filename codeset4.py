@@ -15,7 +15,7 @@ def pad(img):
   return np.concatenate((res, acc), axis=0)
 
 def crop(img):
-  return img[0:(len(img) // 2) - 1, 0:(len(img) // 2) - 1]
+  return img[0:(len(img) // 2) - 1, 0:(len(img[0]) // 2) - 1]
 
 def shift(img):
   resImg = np.copy(img)
@@ -207,13 +207,14 @@ def testGLPF():
 #testGLPF()
 
 def BLPF(img, r, n):
-  resImg = np.copy(img)
-  center = len(resImg[0]) // 2
-  for i, row in enumerate(resImg):
+  out = np.copy(img)
+  centerI = len(out) // 2
+  centerJ = len(out[0]) // 2
+  for i, row in enumerate(out):
     for j, col in enumerate(row):
-      D = ((i - center)**2 + (j - center)**2)**(1/2)
-      resImg[i][j] = 1 / (1 + abs(D / r)**(2*n))
-  return resImg
+      D = ((i - centerI)**2 + (j - centerJ)**2)**(1/2)
+      out[i][j] = 1 / (1 + abs(D / r)**(2*n))
+  return out
 
 def testBLPF():
   tifImg = TIFF.open(IMG_SET_4_REL_PATH + 'Fig0441(a)(characters_test_pattern).tif', mode='r')
@@ -413,6 +414,6 @@ def testGHPF():
   plt.show()
   tifImg.close()
 
-testGHPF()
+#testGHPF()
 
 # FIXME -> use correct H and L for high low filter namings respectively
