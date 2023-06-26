@@ -1,4 +1,3 @@
-
 from libtiff import TIFF
 import numpy as np
 import math
@@ -529,3 +528,58 @@ def testBBRF():
   tifSinusoidalNoise.close()
 
 #testBBRF()
+
+def notchIBRF(img, u, v, D0):
+  out = np.copy(img)
+  m = len(out) // 2
+  n = len(out[0]) // 2
+  for i, row in enumerate(out):
+    for j, col in enumerate(row):
+      DK = ((i-m-u)**2 + (j-n-v)**2)**(1/2)
+      DmK = ((i-m+u)**2 + (j-n+v)**2)**(1/2)
+      if DK < D0 or DmK < D0:
+        out[i][j] = 0
+      else:
+        out[i][j] = 1
+  return out
+
+def testnotchIBRF():
+  img = np.full((256, 256), 0).astype(np.float64)
+  img = pad(img)
+  img = shift(img)
+  imgNotchBBFT = notchIBRF(img, 136, -136, 10) * notchIBRF(img, 136, -136, 10)
+  imgNotchBBFT8 = to8bit(imgNotchBBFT, mode='scale')
+  print(np.unique(imgNotchBBFT8))
+
+  plt.imshow(imgNotchBBFT8, cmap='gray', vmin=0, vmax=MAX_VAL)
+  plt.show()
+
+#testnotchIBRF()
+
+def notchBBRF(img, u, v, D0, order):
+  out = np.copy(img)
+  m = len(out) // 2
+  n = len(out[0]) // 2
+  for i, row in enumerate(out):
+    for j, col in enumerate(row):
+      DK = ((i-m-u)**2 + (j-n-v)**2)**(1/2)
+      DmK = ((i-m+u)**2 + (j-n+v)**2)**(1/2)
+      if DK != 0 and DmK != 0:
+        out[i][j] = (1 / (1 + abs(D0 / DK))**(2*order)) * (1 / (1 + abs(D0 / DmK))**(2*order))
+        continue
+      else:
+        out[i][j] = 0
+  return out
+
+def testnotchBBRF():
+  img = np.full((256, 256), 0).astype(np.float64)
+  img = pad(img)
+  img = shift(img)
+  imgNotchBBFT = notchBBRF(img, 136, -136, 1, 1) * notchBBRF(img, 136, -136, 1, 1)
+  imgNotchBBFT8 = to8bit(imgNotchBBFT, mode='scale')
+  print(np.unique(imgNotchBBFT8))
+
+  plt.imshow(imgNotchBBFT8, cmap='gray', vmin=0, vmax=MAX_VAL)
+  plt.show()
+
+#testnotchBBRF()

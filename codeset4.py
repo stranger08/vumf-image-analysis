@@ -105,6 +105,7 @@ def testSin2D():
 #testSin2D()
 
 def ILPF(img, r):
+  # FIXME - images may not be rectanguler therefore center calculation has to be adjusted accordinly
   resImg = np.copy(img)
   center = len(resImg[0]) // 2
   for i, row in enumerate(resImg):

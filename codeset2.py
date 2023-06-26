@@ -59,7 +59,7 @@ def testIntensityPowerlawDown():
   tifImg.close()
 
 def thresholdingValue(arr, t):
-  return np.array([[0 if x > t else 255 for x in row] for row in arr])
+  return np.array([[255 if x > t else 0 for x in row] for row in arr])
 
 def thresholdingRange(arr, lower, higher):
   return np.array([[0 if x < lower or x > higher else 255 for x in row] for row in arr])

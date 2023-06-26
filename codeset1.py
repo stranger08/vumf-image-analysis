@@ -166,19 +166,22 @@ def imageConstruction():
   c = circle()
   saveImageToFile(c, 'circle.tif', False)
 
-def combine():
+def combine(r, g, b):
+  return np.stack([r, g, b], axis=-1, dtype=np.uint8)
+
+def testCombine():
   tifImgAcridine = TIFF.open(IMG_SET_1_REL_PATH + 'Region_001_FOV_00041_Acridine_Or_Gray.tif')
   tifImgDAPI = TIFF.open(IMG_SET_1_REL_PATH + 'Region_001_FOV_00041_DAPI_Gray.tif')
   tifImgFITC = TIFF.open(IMG_SET_1_REL_PATH + 'Region_001_FOV_00041_FITC_Gray.tif')
   dataAcridine = tifImgAcridine.read_image()
   dataDAPI = tifImgDAPI.read_image()
   dataFITC = tifImgFITC.read_image()
-  combined = np.flip(np.stack([dataAcridine, dataDAPI, dataFITC], axis=-1, dtype=np.uint8), axis=0)
+  combined = combine(dataAcridine, dataDAPI, dataFITC)
   plt.imshow(combined, interpolation='nearest')
   plt.show()
   saveImageToFile(combined, 'Region_001_FOV_00041_combined.tif', True)
 
-#combine()
+#testCombine()
 
 def testGreyscaleSideways():
   plotImage(grayscaleSideways)

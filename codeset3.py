@@ -4,7 +4,6 @@ from matplotlib import pyplot as plt
 from codeset1 import plotImage, MAX_VAL
 from codeset2 import intensityPowerlaw
 
-# TODO -> refactor padding, this already so spaggeti
 def spatialFilter(image, filter, convolution=False, mirror=False):
   out = np.copy(image)
   filterCenter = len(filter) // 2
@@ -13,12 +12,6 @@ def spatialFilter(image, filter, convolution=False, mirror=False):
     for img_j, x in enumerate(row):
 
       acc = 0
-      # TODO -> extract this to separate function which would,
-      # receive image box of filter size, filter itself, return pixel value.
-      # this will work for all median, average, geometrical mean, convolution, correlation,
-      # likely something can be done for mirroring too. 
-      # for median filter we collect values into array
-      #mask = []
       for filterOffsetI in range(-filterCenter, filterCenter + 1):
         for filterOffsetJ in range(-filterCenter, filterCenter + 1):
           # calc eff coordinates
@@ -36,13 +29,8 @@ def spatialFilter(image, filter, convolution=False, mirror=False):
             else:
               continue
           acc += image[i, j] * filter[filterCenter + filterOffsetI, filterCenter + filterOffsetJ]
-          # for median filter, TODO move to different function.
-          # mask.append(image[i, j])
 
       out[img_i, img_j] = acc
-      # for median
-      #print(mask)
-      #out[img_i, img_j] = np.median(np.array(mask))
 
   return out
 
